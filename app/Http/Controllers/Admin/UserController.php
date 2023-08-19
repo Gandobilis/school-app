@@ -15,7 +15,7 @@ class UserController extends Controller
     public function index()
     {
         $users = User::all();
-        return response()->json($users);
+        return response($users);
     }
 
     /**
@@ -23,75 +23,52 @@ class UserController extends Controller
      */
     public function store(UserFormRequest $request)
     {
-        $user = new User([
+        $user = User::create([
             'name' => $request->input('name'),
             'email' => $request->input('email'),
             'password' => Hash::make($request->input('password')),
         ]);
 
-        $user->save();
-
-        return response()->json([
-            'message' => 'User registered.'
+        return response([
+            'message' => 'User registered.',
+            'user' => $user
         ], 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(User $user)
     {
-        $user = User::find($id);
-
-        if (!$user) {
-            return response()->json([
-                'message' => 'User not found.'
-            ], 404);
-        }
-
-        return response()->json($user);
+        return response([
+            'user' => $user
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UserFormRequest $request, $id)
+    public function update(UserFormRequest $request, User $user)
     {
-        $user = User::find($id);
-
-        if (!$user) {
-            return response()->json([
-                'message' => 'User not found.'
-            ], 404);
-        }
-
         $user->update([
             'name' => $request->input('name', $user->name),
             'email' => $request->input('email', $user->email),
             'password' => Hash::make($request->input('password', $user->password)),
         ]);
 
-        return response()->json([
-            'message' => 'User updated.'
+        return response([
+            'message' => 'User updated.',
+            'user' => $user
         ]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(User $user)
     {
-        $user = User::find($id);
-
-        if (!$user) {
-            return response()->json([
-                'message' => 'User not found.'
-            ], 404);
-        }
-
         $user->delete();
-
-        return response()->json([
+        return response([
             'message' => 'User deleted.'
         ], 202);
     }
