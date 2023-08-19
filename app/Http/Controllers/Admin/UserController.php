@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Http\Requests\UserFormRequest;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -63,8 +64,6 @@ class UserController extends Controller
                 'message' => 'User not found.'
             ], 404);
         }
-
-        $this->validateUser($request, false);
 
         $user->update([
             'name' => $request->input('name', $user->name),
