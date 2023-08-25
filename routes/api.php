@@ -1,7 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\LecturerController;
 use Illuminate\Support\Facades\Route;

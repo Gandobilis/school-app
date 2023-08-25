@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Http\Requests\UserFormRequest;
+use App\Http\Requests\StoreUserRequest;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -21,7 +21,7 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(UserFormRequest $request)
+    public function store(StoreUserRequest $request)
     {
         $user = User::create([
             'name' => $request->input('name'),
@@ -48,7 +48,7 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UserFormRequest $request, User $user)
+    public function update(StoreUserRequest $request, User $user)
     {
         $user->update([
             'name' => $request->input('name', $user->name),
