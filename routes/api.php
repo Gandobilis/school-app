@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CourseController;
+use App\Http\Controllers\LecturerController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,4 +17,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::apiResource('/users', UserController::class);
+Route::post('/login', [AuthController::class, 'login']);
+
+Route::group(['middleware' => 'auth:sanctum'], function () {
+    Route::apiResource('/users', UserController::class);
+    Route::apiResource('/lecturers', LecturerController::class);
+    Route::apiResource('/courses', CourseController::class);
+    Route::post('/logout', [AuthController::class, 'logout']);
+});
+
