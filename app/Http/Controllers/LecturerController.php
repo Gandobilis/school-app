@@ -14,7 +14,9 @@ class LecturerController extends Controller
     public function index()
     {
         $lecturers = Lecturer::all();
-        return response()->json($lecturers);
+        return response([
+            'lecturers' => $lecturers
+        ]);
     }
 
     /**
@@ -22,8 +24,11 @@ class LecturerController extends Controller
      */
     public function store(StoreLecturerRequest $request)
     {
+        $request->validated();
         $lecturer = Lecturer::create($request->all());
-        return response()->json($lecturer, 201);
+        return response([
+            'lecturer' => $lecturer
+        ], 201);
     }
 
     /**
