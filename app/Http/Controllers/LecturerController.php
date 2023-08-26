@@ -36,7 +36,9 @@ class LecturerController extends Controller
      */
     public function show(Lecturer $lecturer)
     {
-        return response()->json($lecturer);
+        return response([
+            'lecturer' => $lecturer
+        ]);
     }
 
     /**
@@ -44,8 +46,11 @@ class LecturerController extends Controller
      */
     public function update(UpdateLecturerRequest $request, Lecturer $lecturer)
     {
+        $request->validated();
         $lecturer->update($request->all());
-        return response()->json($lecturer);
+        return response([
+            'lecturer' => $lecturer
+        ]);
     }
 
     /**
@@ -54,6 +59,8 @@ class LecturerController extends Controller
     public function destroy(Lecturer $lecturer)
     {
         $lecturer->delete();
-        return response()->json(null, 204);
+        return response([
+            'message' => 'Lecturer Deleted.'
+        ], 202);
     }
 }

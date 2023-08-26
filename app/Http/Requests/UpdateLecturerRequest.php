@@ -11,7 +11,7 @@ class UpdateLecturerRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,9 @@ class UpdateLecturerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required|string',
+            'email' => 'required|string|unique:lecturers,email,' . $this->request->get('email'),
+            'specialization' => 'required|string'
         ];
     }
 }
