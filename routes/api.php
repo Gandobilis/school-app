@@ -1,9 +1,8 @@
 <?php
 
-use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\LecturerController;
 use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\CourseController;
-use App\Http\Controllers\LecturerController;
+use App\Http\Controllers\Auth\AuthController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,14 +15,14 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+Route::middleware('locale')->group(function () {
+    Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
 
-Route::group(['middleware' => 'locale'], function () {
-    Route::post('/login', [AuthController::class, 'login']);
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/logout', [AuthController::class, 'logout'])->middleware(['auth:sanctum'])->name('auth.logout');
 
-    Route::group(['middleware' => 'auth:sanctum'], function () {
-        Route::apiResource('/users', UserController::class);
-        Route::apiResource('/lecturers', LecturerController::class);
-        Route::apiResource('/courses', CourseController::class);
-        Route::post('/logout', [AuthController::class, 'logout']);
+        Route::apiResource('/users', UserController::class)->names('admin.users');
+        Route::apiResource('/lecturers', LecturerController::class)->names('admin.lecturers');
     });
+
 });

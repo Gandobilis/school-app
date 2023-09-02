@@ -4,15 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
+use Astrotomic\Translatable\Translatable;
 
-class Lecturer extends Model
+class Lecturer extends Model implements TranslatableContract
 {
     use HasFactory;
+    use Translatable;
 
-    protected $fillable = ['name', 'email', 'specialization'];
+    public $translatedAttributes = ['name', 'position', 'description'];
 
-    public function courses()
-    {
-        return $this->hasMany(Course::class);
-    }
+    protected $fillable = [
+        'image',
+        'linkedin'
+    ];
 }

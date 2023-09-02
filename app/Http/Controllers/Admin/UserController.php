@@ -3,34 +3,37 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\User\UserRequest;
 use App\Models\User;
-use App\Http\Requests\StoreUserRequest;
-use Illuminate\Support\Facades\Hash;
+use App\Services\FileUploadService;
+use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
+    public function __construct(protected FileUploadService $fileUploadService)
+    {
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $users = User::all();
-        return response($users);
+        return response([
+            'message' => "List of users"
+        ], 200);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreUserRequest $request)
+    public function store(UserRequest $request)
     {
-        $user = User::create([
-            'name' => $request->input('name'),
-            'email' => $request->input('email'),
-            'password' => Hash::make($request->input('password')),
-        ]);
+        $data = $request->validated();
+        $data['profile_image'] = $this->fileUploadService->fileUpload($data['profile_image'])['path'];
 
+        $user = User::create($data);
         return response([
-            'message' => 'User registered.',
+            'message' => "User Created",
             'user' => $user
         ], 201);
     }
@@ -38,38 +41,30 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(User $user)
+    public function show($id)
     {
         return response([
-            'user' => $user
-        ]);
+            'message' => "User Detail Data"
+        ], 200);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(StoreUserRequest $request, User $user)
+    public function update(Request $request, $id)
     {
-        $user->update([
-            'name' => $request->input('name', $user->name),
-            'email' => $request->input('email', $user->email),
-            'password' => Hash::make($request->input('password', $user->password)),
-        ]);
-
         return response([
-            'message' => 'User updated.',
-            'user' => $user
-        ]);
+            'message' => "User Updated"
+        ], 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User $user)
+    public function destroy($id)
     {
-        $user->delete();
         return response([
-            'message' => 'User deleted.'
-        ], 202);
+            'message' => "User Deleted"
+        ], 200);
     }
 }

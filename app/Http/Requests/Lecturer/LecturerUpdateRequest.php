@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Lecturer;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreUserRequest extends FormRequest
+class LecturerUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,13 +22,13 @@ class StoreUserRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:8',
+            "linkedin" => "required|string|max:255",
+            "image" => "nullable|mimes:png,jpg,jpeg"
         ];
-
-        if ($this->isMethod('patch')) {
-            $rules['email'] .= ',' . $this->route('user');
+        foreach (config('translatable.locales') as $locale) {
+            $rules["$locale.name"] = "required|string|max:255";
+            $rules["$locale.position"] = "required|string|max:255";
+            $rules["$locale.description"] = "required|string";
         }
 
         return $rules;
