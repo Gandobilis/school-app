@@ -33,7 +33,7 @@ class LecturerController extends Controller
     public function store(LecturerRequest $request)
     {
         $data = $request->validated();
-        $data['image'] = $this->fileUploadService->fileUpload($data['image'], 'lecturer')['path'];
+//        $data['image'] = $this->fileUploadService->fileUpload($data['image'], 'lecturer')['path'];
 
         $lecturer = Lecturer::create($data);
 
