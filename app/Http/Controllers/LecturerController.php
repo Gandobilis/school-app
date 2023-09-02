@@ -13,7 +13,10 @@ class LecturerController extends Controller
      */
     public function index()
     {
-        //
+        $lecturers = Lecturer::all();
+        return response([
+            'lecturers' => $lecturers
+        ]);
     }
 
     /**
@@ -21,7 +24,11 @@ class LecturerController extends Controller
      */
     public function store(StoreLecturerRequest $request)
     {
-        //
+        $request->validated();
+        $lecturer = Lecturer::create($request->all());
+        return response([
+            'lecturer' => $lecturer
+        ], 201);
     }
 
     /**
@@ -29,7 +36,9 @@ class LecturerController extends Controller
      */
     public function show(Lecturer $lecturer)
     {
-        //
+        return response([
+            'lecturer' => $lecturer
+        ]);
     }
 
     /**
@@ -37,7 +46,11 @@ class LecturerController extends Controller
      */
     public function update(UpdateLecturerRequest $request, Lecturer $lecturer)
     {
-        //
+        $request->validated();
+        $lecturer->update($request->all());
+        return response([
+            'lecturer' => $lecturer
+        ]);
     }
 
     /**
@@ -45,6 +58,9 @@ class LecturerController extends Controller
      */
     public function destroy(Lecturer $lecturer)
     {
-        //
+        $lecturer->delete();
+        return response([
+            'message' => 'Lecturer Deleted.'
+        ], 202);
     }
 }

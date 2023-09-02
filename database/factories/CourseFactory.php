@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Lecturer;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,8 +17,11 @@ class CourseFactory extends Factory
      */
     public function definition(): array
     {
+        $lecturer = Lecturer::inRandomOrder()->firstOrCreate();
         return [
-            //
+            'title' => $this->faker->sentence,
+            'description' => $this->faker->paragraph,
+            'lecturer_id' => $lecturer->id
         ];
     }
 }
