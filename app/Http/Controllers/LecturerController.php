@@ -15,7 +15,8 @@ class LecturerController extends Controller
     {
         $lecturers = Lecturer::all();
         return response([
-            'lecturers' => $lecturers
+            'message' => __('lecturers.lecturers_list')
+//            'lecturers' => $lecturers
         ]);
     }
 
@@ -24,8 +25,7 @@ class LecturerController extends Controller
      */
     public function store(StoreLecturerRequest $request)
     {
-        $request->validated();
-        $lecturer = Lecturer::create($request->all());
+        $lecturer = Lecturer::create($request->validated());
         return response([
             'lecturer' => $lecturer
         ], 201);
@@ -46,8 +46,8 @@ class LecturerController extends Controller
      */
     public function update(UpdateLecturerRequest $request, Lecturer $lecturer)
     {
-        $request->validated();
-        $lecturer->update($request->all());
+
+        $lecturer->update($request->validated());
         return response([
             'lecturer' => $lecturer
         ]);

@@ -24,8 +24,8 @@ class CourseController extends Controller
      */
     public function store(StoreCourseRequest $request)
     {
-        $request->validated();
-        $course = Course::create($request->all());
+
+        $course = Course::create($request->validated());
         return response([
             'course' => $course
         ], 201);
@@ -46,8 +46,8 @@ class CourseController extends Controller
      */
     public function update(UpdateCourseRequest $request, Course $course)
     {
-        $request->validated();
-        $course->update($request->all());
+
+        $course->update($request->validated());
         return response([
             'course' => $course
         ]);
