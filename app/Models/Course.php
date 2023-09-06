@@ -2,24 +2,20 @@
 
 namespace App\Models;
 
+use Astrotomic\Translatable\Translatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Astrotomic\Translatable\Translatable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class Lecturer extends Model
+class Course extends Model
 {
     use HasFactory;
     use Translatable;
 
-    public $translatedAttributes = ['name', 'position', 'description'];
+    public $translatedAttributes = ['title', 'text', 'description'];
 
-    protected $fillable = [
-        'image',
-        'linkedin'
-    ];
 
-    public function courses(): belongsToMany
+    public function lecturers(): belongsToMany
     {
         return $this->belongsToMany(Course::class, 'lecturer_course');
     }

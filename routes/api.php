@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Admin\LecturerController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\AuthController;
@@ -23,6 +24,7 @@ Route::middleware('locale')->group(function () {
 
         Route::apiResource('/users', UserController::class)->names('admin.users');
         Route::apiResource('/lecturers', LecturerController::class)->names('admin.lecturers');
+        Route::apiResource('/courses', CourseController::class)->names('admin.courses');
     });
 
 });

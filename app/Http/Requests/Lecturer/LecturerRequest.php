@@ -23,7 +23,7 @@ class LecturerRequest extends FormRequest
     {
         $rules = [
             "linkedin" => "required|string|max:255",
-            "image" => "required" // |mimes:png,jpg,jpeg"
+            "image" => "required|mimes:png,jpg,jpeg"
         ];
         foreach (config('translatable.locales') as $locale) {
             $rules["$locale.name"] = "required|string|max:255";
