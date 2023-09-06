@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Lecturer;
+namespace App\Http\Requests\Course;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class LecturerUpdateRequest extends FormRequest
+class CourseUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,13 +22,12 @@ class LecturerUpdateRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            "linkedin" => "required|string|max:255",
             "image" => "nullable|mimes:png,jpg,jpeg",
-            "course_ids" => "array"
+            "lecturer_ids" => "array"
         ];
         foreach (config('translatable.locales') as $locale) {
-            $rules["$locale.name"] = "required|string|max:255";
-            $rules["$locale.position"] = "required|string|max:255";
+            $rules["$locale.title"] = "required|string|max:255";
+            $rules["$locale.text"] = "required|string|max:255";
             $rules["$locale.description"] = "required|string";
         }
 

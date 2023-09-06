@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Lecturer\LecturerRequest;
-use App\Http\Requests\Lecturer\LecturerUpdateRequest;
+use App\Http\Requests\Lecturer\CourseRequest;
+use App\Http\Requests\Lecturer\CourseUpdateRequest;
 use App\Models\Lecturer;
 use App\Services\FileUploadService;
 
@@ -13,15 +13,13 @@ class LecturerController extends Controller
     public function __construct(private FileUploadService $fileUploadService)
     {
     }
-    /**
-     * Display a listing of the resource.
-     */
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $lecturers = Lecturer::with('translation')->paginate(10);
+        $lecturers = Lecturer::with('translation', 'courses')->paginate(10);
         return response([
             'lecturers' => $lecturers
         ], 200);
@@ -30,12 +28,13 @@ class LecturerController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(LecturerRequest $request)
+    public function store(CourseRequest $request)
     {
         $data = $request->validated();
         $data['image'] = $this->fileUploadService->fileUpload($data['image'], 'lecturer')['path'];
 
         $lecturer = Lecturer::create($data);
+        $lecturer->courses()->attach(json_decode($data['course_ids']));
 
         return response([
             'lecturer' => $lecturer
@@ -47,7 +46,7 @@ class LecturerController extends Controller
      */
     public function show(Lecturer $lecturer)
     {
-        $lecturer->load('translation');
+        $lecturer->load('translation', 'courses');
         return response([
             'lecturer' => $lecturer
         ], 200);
@@ -56,7 +55,7 @@ class LecturerController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(LecturerUpdateRequest $request, Lecturer $lecturer)
+    public function update(CourseUpdateRequest $request, Lecturer $lecturer)
     {
         $data = $request->validated();
         if (isset($data['image'])) {
@@ -64,6 +63,8 @@ class LecturerController extends Controller
             $this->fileUploadService->deleteFile($lecturer->image);
         }
         $lecturer->update($data);
+        $lecturer->courses()->sync(json_decode($data['course_ids']));
+
         return response([
             'lecturer' => $lecturer->refresh()
         ], 200);
@@ -74,6 +75,7 @@ class LecturerController extends Controller
      */
     public function destroy(Lecturer $lecturer)
     {
+        $lecturer->courses()->detach();
         $lecturer->delete();
         return response([
             "message" => "Lecturer Deleted"

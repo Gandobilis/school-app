@@ -14,6 +14,7 @@ class Course extends Model
 
     public $translatedAttributes = ['title', 'text', 'description'];
 
+    protected $fillable = ['image'];
 
     public function lecturers(): belongsToMany
     {

@@ -12,10 +12,11 @@ return new class extends Migration {
     {
         Schema::create('courses', function (Blueprint $table) {
             $table->id();
+            $table->text('image');
             $table->timestamps();
         });
 
-        Schema::create('courses_translations', function (Blueprint $table) {
+        Schema::create('course_translations', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('course_id');
             $table->string('locale')->index();
