@@ -22,13 +22,18 @@ class CourseRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            "image" => "required|mimes:png,jpg,jpeg",
-            "lecturer_ids" => "array"
+            "image" => "required|mimes:png,jpg,jpeg,webp",
+            "syllabus" => "required|mimes:pdf",
+            "duration" => "required|numeric",
+            "fee" => "required|numeric",
+            "old_fee" => "numeric",
+            "start_date" => "required|date"
+//            "lecturer_ids" => "array"
         ];
         foreach (config('translatable.locales') as $locale) {
             $rules["$locale.title"] = "required|string|max:255";
-            $rules["$locale.text"] = "required|string|max:255";
-            $rules["$locale.description"] = "required|string";
+            $rules["$locale.short_description"] = "required|string|max:255";
+            $rules["$locale.detailed_description"] = "required|string";
         }
 
         return $rules;

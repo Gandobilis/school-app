@@ -10,6 +10,6 @@ class CourseTranslation extends Model
     use HasFactory;
 
     public $timestamps = false;
-    protected $fillable = ['title', 'text', 'description'];
+    protected $fillable = ['title', 'short_description', 'detailed_description'];
 
 }
