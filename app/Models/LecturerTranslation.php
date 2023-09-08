@@ -10,6 +10,6 @@ class LecturerTranslation extends Model
     use HasFactory;
 
     public $timestamps = false;
-    protected $fillable = ['name', 'position', 'description'];
+    protected $fillable = ['first_name', 'last_name', 'position', 'description'];
 
 }

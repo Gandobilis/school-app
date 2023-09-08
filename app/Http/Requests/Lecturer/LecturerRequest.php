@@ -27,7 +27,8 @@ class LecturerRequest extends FormRequest
             "course_ids" => "array"
         ];
         foreach (config('translatable.locales') as $locale) {
-            $rules["$locale.name"] = "required|string|max:255";
+            $rules["$locale.first_name"] = "required|string|max:255";
+            $rules["$locale.last_name"] = "required|string|max:255";
             $rules["$locale.position"] = "required|string|max:255";
             $rules["$locale.description"] = "required|string";
         }

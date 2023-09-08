@@ -4,20 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
 use Astrotomic\Translatable\Translatable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class Lecturer extends Model
+class Lecturer extends Model implements TranslatableContract
 {
     use HasFactory;
     use Translatable;
 
-    public $translatedAttributes = ['name', 'position', 'description'];
+    public $translatedAttributes = ['first_name', 'last_name', 'position', 'description'];
 
-    protected $fillable = [
-        'image',
-        'linkedin'
-    ];
+    protected $fillable = ['image', 'linkedin'];
 
     public function courses(): belongsToMany
     {
