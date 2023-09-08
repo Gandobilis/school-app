@@ -27,8 +27,9 @@ class CourseRequest extends FormRequest
             "duration" => "required|numeric",
             "fee" => "required|numeric",
             "old_fee" => "numeric",
-            "start_date" => "required|date"
-//            "lecturer_ids" => "array"
+            "start_date" => "required|date",
+            "lecturer_ids" => "array",
+            "lecturer_ids.*' => 'exists:lecturers,id"
         ];
         foreach (config('translatable.locales') as $locale) {
             $rules["$locale.title"] = "required|string|max:255";

@@ -28,10 +28,10 @@ class LecturerController extends Controller
     public function store(LecturerRequest $request)
     {
         $data = $request->validated();
-        $data['image'] = $this->fileUploadService->fileUpload($data['image'], 'lecturer')['path'];
+        $data['image'] = $this->fileUploadService->fileUpload($data['image'], 'lecturer/images')['path'];
 
         $lecturer = Lecturer::create($data);
-//        $lecturer->courses()->attach(json_decode($data['course_ids']));
+        $lecturer->courses()->attach($data['course_ids']);
 
         return response(['lecturer' => $lecturer], 201);
     }
@@ -53,11 +53,11 @@ class LecturerController extends Controller
     {
         $data = $request->validated();
         if (isset($data['image'])) {
-            $data['image'] = $this->fileUploadService->fileUpload($data['image'], 'lecturer')['path'];
+            $data['image'] = $this->fileUploadService->fileUpload($data['image'], 'lecturer/images')['path'];
             $this->fileUploadService->deleteFile($lecturer->image);
         }
         $lecturer->update($data);
-//        $lecturer->courses()->sync(json_decode($data['course_ids']));
+        $lecturer->courses()->sync($data['course_ids']);
 
         return response(['lecturer' => $lecturer->refresh()]);
     }
@@ -67,7 +67,7 @@ class LecturerController extends Controller
      */
     public function destroy(Lecturer $lecturer)
     {
-//        $lecturer->courses()->detach();
+        $lecturer->courses()->detach();
         $lecturer->delete();
 
         return response(["message" => "Lecturer Deleted"]);

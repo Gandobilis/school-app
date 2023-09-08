@@ -34,8 +34,7 @@ class CourseController extends Controller
 
         $course = Course::create($data);
 
-//        $lecturer_ids = json_decode($data['lecturer_ids']);
-//        $course->lecturers()->attach($lecturer_ids);
+        $course->lecturers()->attach($data['lecturer_ids']);
 
         return response(['course' => $course], 201);
     }
@@ -66,8 +65,7 @@ class CourseController extends Controller
         }
         $course->update($data);
 
-//        $lecturer_ids = json_decode($data['lecturer_ids']);
-//        $course->lecturers()->sync($lecturer_ids);
+        $course->lecturers()->sync($data['lecturer_ids']);
 
         return response(['course' => $course->refresh()]);
     }
@@ -77,7 +75,7 @@ class CourseController extends Controller
      */
     public function destroy(Course $course)
     {
-//        $course->lecturers()->detach();
+        $course->lecturers()->detach();
         $course->delete();
 
         return response(["message" => "Course Deleted"]);

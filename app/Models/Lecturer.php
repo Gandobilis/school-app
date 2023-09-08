@@ -19,6 +19,6 @@ class Lecturer extends Model implements TranslatableContract
 
     public function courses(): belongsToMany
     {
-        return $this->belongsToMany(Course::class, 'lecturer_course');
+        return $this->belongsToMany(Course::class, 'lecturer_course', 'lecturer_id', 'course_id');
     }
 }

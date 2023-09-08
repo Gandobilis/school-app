@@ -24,7 +24,8 @@ class LecturerRequest extends FormRequest
         $rules = [
             "linkedin" => "required|string|max:255",
             "image" => "required|mimes:png,jpg,jpeg,webp",
-//            "course_ids" => "array"
+            "course_ids" => "array",
+            "course_ids.*" => "exists:courses,id"
         ];
         foreach (config('translatable.locales') as $locale) {
             $rules["$locale.first_name"] = "required|string|max:255";
