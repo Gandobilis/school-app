@@ -13,6 +13,11 @@ return new class extends Migration {
         Schema::create('courses', function (Blueprint $table) {
             $table->id();
             $table->text('image');
+            $table->text('syllabus');
+            $table->integer('duration');
+            $table->decimal('fee');
+            $table->decimal('old_fee')->nullable();
+            $table->date('start_date');
             $table->timestamps();
         });
 
@@ -21,8 +26,8 @@ return new class extends Migration {
             $table->unsignedBigInteger('course_id');
             $table->string('locale')->index();
             $table->string('title');
-            $table->text('description');
-            $table->text('text');
+            $table->text('short_description');
+            $table->text('detailed_description');
 
             $table->unique(['course_id', 'locale']);
             $table->foreign('course_id')->references('id')->on('courses')->cascadeOnDelete();
