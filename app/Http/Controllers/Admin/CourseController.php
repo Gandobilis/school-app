@@ -57,11 +57,11 @@ class CourseController extends Controller
     {
         $data = $request->validated();
         if (isset($data['image'])) {
-            $data['image'] = $this->fileUploadService->fileUpload($data['image'], 'course/images')['path'];
+            $data['image'] = $this->fileUploadService->fileUpload($data['image'], 'course')['path'];
             $this->fileUploadService->deleteFile($course->image);
         }
         if (isset($data['syllabus'])) {
-            $data['syllabus'] = $this->fileUploadService->fileUpload($data['syllabus'], 'course/syllabuses')['path'];
+            $data['syllabus'] = $this->fileUploadService->fileUpload($data['syllabus'], 'course')['path'];
             $this->fileUploadService->deleteFile($course->syllabus);
         }
         $course->update($data);
