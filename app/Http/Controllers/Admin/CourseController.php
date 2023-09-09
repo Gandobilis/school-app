@@ -34,7 +34,7 @@ class CourseController extends Controller
 
         $course = Course::create($data);
 
-        $course->lecturers()->attach($data['lecturer_ids']);
+        if (isset($data['lecturer_ids'])) $course->lecturers()->attach($data['lecturer_ids']);
 
         return response(['course' => $course], 201);
     }
@@ -65,7 +65,7 @@ class CourseController extends Controller
         }
         $course->update($data);
 
-        $course->lecturers()->sync($data['lecturer_ids']);
+        if (isset($data['lecturer_ids'])) $course->lecturers()->sync($data['lecturer_ids']);
 
         return response(['course' => $course->refresh()]);
     }

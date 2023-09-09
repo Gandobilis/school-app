@@ -31,7 +31,7 @@ class LecturerController extends Controller
         $data['image'] = $this->fileUploadService->fileUpload($data['image'], 'lecturer/images')['path'];
 
         $lecturer = Lecturer::create($data);
-        $lecturer->courses()->attach($data['course_ids']);
+        if (isset($data['course_ids'])) $lecturer->courses()->attach($data['course_ids']);
 
         return response(['lecturer' => $lecturer], 201);
     }
@@ -57,7 +57,7 @@ class LecturerController extends Controller
             $this->fileUploadService->deleteFile($lecturer->image);
         }
         $lecturer->update($data);
-        $lecturer->courses()->sync($data['course_ids']);
+        if (isset($data['course_ids'])) $lecturer->courses()->sync($data['course_ids']);
 
         return response(['lecturer' => $lecturer->refresh()]);
     }

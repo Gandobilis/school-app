@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
@@ -20,5 +21,12 @@ class Lecturer extends Model implements TranslatableContract
     public function courses(): belongsToMany
     {
         return $this->belongsToMany(Course::class, 'lecturer_course', 'lecturer_id', 'course_id');
+    }
+
+    protected function image(): Attribute
+    {
+        return Attribute::make(
+            get: fn(string $image) => url('/') . '/storage/' . $image
+        );
     }
 }
