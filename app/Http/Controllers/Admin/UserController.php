@@ -13,14 +13,14 @@ class UserController extends Controller
     public function __construct(protected FileUploadService $fileUploadService)
     {
     }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return response([
-            'message' => "List of users"
-        ], 200);
+        $users = User::all();
+        return response(['users' => $users]);
     }
 
     /**
@@ -29,7 +29,7 @@ class UserController extends Controller
     public function store(UserRequest $request)
     {
         $data = $request->validated();
-        $data['profile_image'] = $this->fileUploadService->fileUpload($data['profile_image'])['path'];
+        $data['profile_image'] = $this->fileUploadService->fileUpload($data['profile_image'], 'storage/users/profile_images')['path'];
 
         $user = User::create($data);
         return response([
@@ -43,18 +43,20 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        return response([
-            'message' => "User Detail Data"
-        ], 200);
+        $user = User::find($id);
+        return response(['user' => $user]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(UserRequest $request, User $user)
     {
+        $user->update($request->validated());
+
         return response([
-            'message' => "User Updated"
+            'message' => "User Updated",
+            'user' => $user->refresh()
         ], 200);
     }
 

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Astrotomic\Translatable\Translatable;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
 use Illuminate\Database\Eloquent\Model;
@@ -34,6 +35,13 @@ class Course extends Model implements TranslatableContract
     {
         return Attribute::make(
             get: fn(string $syllabus) => url('/') . '/storage/' . $syllabus
+        );
+    }
+
+    protected function startDate(): Attribute
+    {
+        return Attribute::make(
+            get: fn(string $startDate) => Carbon::parse($startDate)->format('F j, Y')
         );
     }
 }

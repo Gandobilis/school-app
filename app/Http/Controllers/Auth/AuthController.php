@@ -4,17 +4,22 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Laravel\Sanctum\Sanctum;
 
 class AuthController extends Controller
 {
-    public function login(LoginRequest $request){
+    public function login(LoginRequest $request)
+    {
         if (!Auth::attempt($request->validated())) {
             return response([
                 'message' => "Credentials don't match"
             ], 422);
+        }
+
+        if (!auth()->user()->active) {
+            return response([
+                'message' => 'Your account is inactive. Please contact support.'
+            ], 403);
         }
 
         return response([
@@ -22,7 +27,8 @@ class AuthController extends Controller
         ], 200);
     }
 
-    public function logout(){
+    public function logout()
+    {
         auth()->user()->tokens()->delete();
 
         return response([

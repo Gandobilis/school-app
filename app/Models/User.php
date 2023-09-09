@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -21,7 +22,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'profile_image'
+        'profile_image',
+        'status'
     ];
 
     /**
@@ -43,4 +45,12 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    protected function profileImage(): Attribute
+    {
+        return Attribute::make(
+        // Default profile picture can be returned instead of null.
+            get: fn($profile_image) => $profile_image ? url('/storage/' . $profile_image) : null
+        );
+    }
 }
