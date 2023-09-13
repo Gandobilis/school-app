@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
 
 
-class banner extends Model implements TranslatableContract
+class Banner extends Model implements TranslatableContract
 {
     use HasFactory;
     use Translatable;
