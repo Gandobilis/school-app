@@ -18,7 +18,9 @@ class CourseController extends Controller
      */
     public function index()
     {
-        $courses = Course::with('translation', 'lecturers')->paginate(10);
+        $courses = Course::with('translation', 'lecturers')
+            ->select(['image', 'title', 'fee', 'old_fee', 'short_description'])
+            ->paginate(10);
 
         return response(['courses' => $courses]);
     }
@@ -44,6 +46,8 @@ class CourseController extends Controller
      */
     public function show(Course $course)
     {
+        $course->setHidden(['short_description']);
+
         $course->load('translation', 'lecturers');
 
         return response(['course' => $course]);
