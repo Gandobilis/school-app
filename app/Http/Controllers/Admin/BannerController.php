@@ -5,18 +5,22 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Banner\BannerRequest;
 use App\Models\Banner;
+use App\Services\FileUploadService;
 use Illuminate\Http\Response;
 
 class BannerController extends Controller
 {
+    public function __construct(private readonly FileUploadService $fileUploadService)
+    {
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index(): Response
     {
         return response([
-            'banners' => Banner::with('translation')
-                ->paginate(4)
+            'banners' => Banner::all()
         ]);
     }
 
@@ -25,7 +29,11 @@ class BannerController extends Controller
      */
     public function store(BannerRequest $request): Response
     {
-        $banner = Banner::create($request->validated());
+        $data = $request->validated();
+        $data['image'] = $this->fileUploadService->fileUpload($data['image'], 'banners/images')['path'];
+
+        $banner = Banner::create($data);
+
         return response([
             'banner' => $banner
         ]);
@@ -46,7 +54,14 @@ class BannerController extends Controller
      */
     public function update(BannerRequest $request, Banner $banner): Response
     {
-        $banner->update($request->validated());
+        $data = $request->validated();
+        if (isset($data['image'])) {
+            $data['image'] = $this->fileUploadService->fileUpload($data['image'], 'banners/images')['path'];
+            $this->fileUploadService->deleteFile($banner->image);
+        }
+
+        $banner->update($data);
+
         return response([
             'banner' => $banner->refresh()
         ]);
@@ -58,6 +73,7 @@ class BannerController extends Controller
     public function destroy(Banner $banner): Response
     {
         $banner->delete();
+
         return response([
             'message' => 'banner deleted'
         ]);

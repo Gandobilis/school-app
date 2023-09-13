@@ -24,7 +24,7 @@ return new class extends Migration {
             $table->string('title');
             $table->text('description');
 
-            $table->unique('banner_id', 'locale');
+            $table->unique(['banner_id', 'locale']);
             $table->foreign('banner_id')->references('id')->on('banners')->cascadeOnDelete();
         });
     }
