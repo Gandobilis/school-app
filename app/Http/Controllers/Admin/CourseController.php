@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Course\CourseRequest;
 use App\Models\Course;
+use App\Models\Student;
 use App\Services\FileUploadService;
+use Illuminate\Http\Request;
 
 class CourseController extends Controller
 {
@@ -83,5 +85,10 @@ class CourseController extends Controller
         $course->delete();
 
         return response(["message" => "Course Deleted"]);
+    }
+
+    public function register(Request $request)
+    {
+        return response(Student::create($request->all()));
     }
 }

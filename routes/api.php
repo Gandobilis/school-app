@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::middleware('locale')->group(function () {
+    Route::post('/courses/{course}/register', [CourseController::class, 'register'])->name('course.register');
 
     Route::post('/subscribe', [SubscriptionController::class, 'subscribe'])->name('subscribe');
     Route::delete('/unsubscribe/{subscription}', [SubscriptionController::class, 'unsubscribe'])->name('unsubscribe');

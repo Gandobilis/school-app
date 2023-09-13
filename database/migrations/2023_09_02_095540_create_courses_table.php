@@ -32,6 +32,18 @@ return new class extends Migration {
             $table->unique(['course_id', 'locale']);
             $table->foreign('course_id')->references('id')->on('courses')->cascadeOnDelete();
         });
+
+        Schema::create('students', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('course_id');
+            $table->string('first_name');
+            $table->string('last_name');
+            $table->string('email')->unique();
+            $table->string('phone')->unique();
+            $table->text('comment')->nullable();
+
+            $table->foreign('course_id')->references('id')->on('courses')->cascadeOnDelete();
+        });
     }
 
     /**

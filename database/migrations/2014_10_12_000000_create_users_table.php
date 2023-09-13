@@ -21,6 +21,17 @@ return new class extends Migration {
             $table->rememberToken();
             $table->timestamps();
         });
+
+        Schema::create('recommendations', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('user_id');
+            $table->string('title');
+            $table->string('text');
+            $table->decimal('rating', 2, 1);
+            $table->string('author');
+
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
+        });
     }
 
     /**
