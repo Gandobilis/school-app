@@ -7,12 +7,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
 
-
+/**
+ * @method static create(mixed $validated)
+ */
 class Banner extends Model implements TranslatableContract
 {
     use HasFactory;
     use Translatable;
 
-    public $translatedAttributes = ['title', 'description'];
+    public array $translatedAttributes = ['title', 'description'];
     protected $fillable = ['image', 'link'];
 }
