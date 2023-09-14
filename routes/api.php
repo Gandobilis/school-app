@@ -19,6 +19,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::middleware('locale')->group(function () {
+    Route::apiResource('/banners', BannerController::class)->only(['index', 'show'])->names('banners');
+
     Route::post('/courses/{course}/register', [CourseController::class, 'register'])->name('course.register');
 
     Route::post('/subscribe', [SubscriptionController::class, 'subscribe'])->name('subscribe');
@@ -32,7 +34,8 @@ Route::middleware('locale')->group(function () {
         Route::apiResource('/users', UserController::class)->names('admin.users');
         Route::apiResource('/lecturers', LecturerController::class)->names('admin.lecturers');
         Route::apiResource('/courses', CourseController::class)->names('admin.courses');
-        Route::apiResource('/banners', BannerController::class)->names('admin.banners');
+
+        Route::apiResource('/banners', BannerController::class)->except(['index', 'show'])->names('admin.banners');
     });
 
 });
