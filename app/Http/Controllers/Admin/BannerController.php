@@ -5,23 +5,23 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Banner\BannerRequest;
 use App\Models\Banner;
-use App\Services\FileUploadService;
 use Illuminate\Http\Response;
+use App\Services\FileUploadService;
 
 class BannerController extends Controller
 {
-    public function __construct(private readonly FileUploadService $fileUploadService)
-    {
-    }
-
     /**
      * Display a listing of the resource.
      */
     public function index(): Response
     {
-        return response([
-            'banners' => Banner::all()
-        ]);
+        $banners = Banner::all();
+
+        if ($banners->isEmpty()) {
+            return response(['message' => 'No banners found'], 404);
+        }
+
+        return response(['banners' => $banners]);
     }
 
     /**
@@ -30,13 +30,15 @@ class BannerController extends Controller
     public function store(BannerRequest $request): Response
     {
         $data = $request->validated();
-        $data['image'] = $this->fileUploadService->fileUpload($data['image'], 'banners/images')['path'];
+        $data['image'] = fileUploadService::uploadFile($data['image'], 'banners');
 
-        $banner = Banner::create($data);
+        try {
+            $banner = Banner::create($data);
+        } catch (Exception $e) {
+            return response(['message' => 'Failed to create banner'], 500);
+        }
 
-        return response([
-            'banner' => $banner
-        ]);
+        return response(['banner' => $banner]);
     }
 
     /**
@@ -44,9 +46,11 @@ class BannerController extends Controller
      */
     public function show(Banner $banner): Response
     {
-        return response([
-            'banner' => $banner
-        ]);
+        if (!$banner->exists) {
+            return response(['message' => 'Banner not found'], 404);
+        }
+
+        return response(['banner' => $banner]);
     }
 
     /**
@@ -54,17 +58,20 @@ class BannerController extends Controller
      */
     public function update(BannerRequest $request, Banner $banner): Response
     {
-        $data = $request->validated();
-        if (isset($data['image'])) {
-            $data['image'] = $this->fileUploadService->fileUpload($data['image'], 'banners/images')['path'];
-            $this->fileUploadService->deleteFile($banner->image);
+        if (!$banner->exists) {
+            return response(['message' => 'Banner not found'], 404);
         }
 
-        $banner->update($data);
+        $data = $request->validated();
+        if (isset($data['image'])) {
+            $data['image'] = fileUploadService::uploadFile($data['image'], 'banners');
+        }
 
-        return response([
-            'banner' => $banner->refresh()
-        ]);
+        if (FileUploadService::deleteFile($banner->image) && $banner->update($data)) {
+            response(['message' => 'failed to update banner'], 500);
+        }
+
+        return response(['banner' => $banner->refresh()]);
     }
 
     /**
@@ -72,10 +79,14 @@ class BannerController extends Controller
      */
     public function destroy(Banner $banner): Response
     {
-        $banner->delete();
+        if (!$banner->exists) {
+            return response(['message' => 'Banner not found'], 404);
+        }
 
-        return response([
-            'message' => 'banner deleted'
-        ]);
+        if (FileUploadService::deleteFile($banner->image) && $banner->delete()) {
+            return response(['message' => 'banner deleted successfully']);
+        } else {
+            return response(['message' => 'failed to delete banner'], 500);
+        }
     }
 }

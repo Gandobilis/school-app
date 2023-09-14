@@ -3,26 +3,19 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 class FileUploadService
 {
-    public function fileUpload($file, $storagePath = 'imgs')
+    public static function uploadFile($file, $storagePath = 'images'): string
     {
-        $originalTitle = $file->getClientOriginalName();
-        $newName = time() . '_' . $originalTitle;
-        $filePath = $file->storeAs($storagePath, $newName, 'public');
-
-        return [
-            'title' => $originalTitle,
-            'path' => $filePath
-        ];
+        $originalFileName = $file->getClientOriginalName();
+        $newFileName = time() . $originalFileName;
+        return $file->storeAs($storagePath, $newFileName, 'public');
     }
 
-    public function deleteFile($path)
+    public static function deleteFile($path): bool
     {
-        if (Storage::exists($path)) {
-            return Storage::delete($path);
-        }
+        if (Storage::exists($path)) return Storage::delete($path);
+        return false;
     }
 }
