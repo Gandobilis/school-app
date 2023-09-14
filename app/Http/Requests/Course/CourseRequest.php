@@ -22,7 +22,7 @@ class CourseRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            "image" => "required|mimes:png,jpg,jpeg,webp",
+            "image" => "required|mimes:png,jpg,jpeg",
             "syllabus" => "required|mimes:pdf",
             "duration" => "required|numeric",
             "fee" => "required|numeric",

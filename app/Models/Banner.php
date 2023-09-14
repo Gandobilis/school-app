@@ -19,7 +19,7 @@ class Banner extends Model implements TranslatableContract
     protected function image(): Attribute
     {
         return Attribute::make(
-            get: fn(string $path) => url('/') . '/storage/' . $path
+            get: fn(string $image) => url('/') . '/storage/' . $image
         );
     }
 }

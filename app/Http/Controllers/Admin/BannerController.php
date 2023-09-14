@@ -54,7 +54,6 @@ class BannerController extends Controller
         }
 
         $banner->update($data);
-        $banner = $banner->refresh();
 
         return response(['banner' => $banner]);
     }

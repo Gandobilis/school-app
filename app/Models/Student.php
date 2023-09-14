@@ -10,8 +10,6 @@ class Student extends Model
 {
     use HasFactory;
 
-    public $timestamps = false;
-
     protected $fillable = ['first_name', 'last_name', 'email', 'phone'];
 
     public function course(): BelongsTo

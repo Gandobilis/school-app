@@ -8,21 +8,17 @@ use App\Models\Course;
 use App\Models\Student;
 use App\Services\FileUploadService;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class CourseController extends Controller
 {
-    public function __construct(private FileUploadService $fileUploadService)
-    {
-    }
 
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): Response
     {
-        $courses = Course::with('translation', 'lecturers')
-            ->select(['image', 'title', 'fee', 'old_fee', 'short_description'])
-            ->paginate(10);
+        $courses = Course::select(['image', 'title', 'fee', 'old_fee', 'short_description'])->paginate(10);
 
         return response(['courses' => $courses]);
     }
@@ -30,15 +26,16 @@ class CourseController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(CourseRequest $request)
+    public function store(CourseRequest $request): Response
     {
         $data = $request->validated();
-        $data['image'] = $this->fileUploadService->fileUpload($data['image'], 'course/images')['path'];
-        $data['syllabus'] = $this->fileUploadService->fileUpload($data['syllabus'], 'course/syllabuses')['path'];
+        $data['image'] = FileUploadService::uploadFile($data['image'], 'course/images');
+        $data['syllabus'] = FileUploadService::uploadFile($data['syllabus'], 'course/syllabuses');
 
         $course = Course::create($data);
 
-        if (isset($data['lecturer_ids'])) $course->lecturers()->attach($data['lecturer_ids']);
+        $lecturer_ids = $data['lecturer_ids'];
+        if (isset($lecturer_ids)) $course->lecturers()->attach($lecturer_ids);
 
         return response(['course' => $course], 201);
     }
@@ -46,11 +43,9 @@ class CourseController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Course $course)
+    public function show(Course $course): Response
     {
         $course->setHidden(['short_description']);
-
-        $course->load('translation', 'lecturers');
 
         return response(['course' => $course]);
     }
@@ -58,20 +53,22 @@ class CourseController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(CourseRequest $request, Course $course)
+    public function update(CourseRequest $request, Course $course): Response
     {
         $data = $request->validated();
         if (isset($data['image'])) {
-            $data['image'] = $this->fileUploadService->fileUpload($data['image'], 'course')['path'];
-            $this->fileUploadService->deleteFile($course->image);
+            $data['image'] = FileUploadService::uploadFile($data['image'], 'course/images');
+            FileUploadService::deleteFile($course->getAttributes()['image']);
         }
         if (isset($data['syllabus'])) {
-            $data['syllabus'] = $this->fileUploadService->fileUpload($data['syllabus'], 'course')['path'];
-            $this->fileUploadService->deleteFile($course->syllabus);
+            $data['syllabus'] = FileUploadService::uploadFile($data['syllabus'], 'course/syllabuses');
+            FileUploadService::deleteFile($course->getAttributes()['syllabus']);
         }
+
         $course->update($data);
 
-        if (isset($data['lecturer_ids'])) $course->lecturers()->sync($data['lecturer_ids']);
+        $lecturer_ids = $data['lecturer_ids'];
+        if (isset($lecturer_ids)) $course->lecturers()->sync($lecturer_ids);
 
         return response(['course' => $course->refresh()]);
     }
@@ -79,15 +76,18 @@ class CourseController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Course $course)
+    public function destroy(Course $course): Response
     {
+        FileUploadService::deleteFile($course->getAttributes()['image']);
+        FileUploadService::deleteFile($course->getAttributes()['syllabus']);
+
         $course->lecturers()->detach();
         $course->delete();
 
-        return response(["message" => "Course Deleted"]);
+        return response(["message" => "Course deleted"]);
     }
 
-    public function register(Request $request)
+    public function register(Request $request): Response
     {
         return response(Student::create($request->all()));
     }

@@ -22,7 +22,6 @@ return new class extends Migration {
         });
 
         Schema::create('course_translations', function (Blueprint $table) {
-            $table->id();
             $table->unsignedBigInteger('course_id');
             $table->string('locale')->index();
             $table->string('title');
@@ -41,6 +40,7 @@ return new class extends Migration {
             $table->string('email')->unique();
             $table->string('phone')->unique();
             $table->text('comment')->nullable();
+            $table->timestamps();
 
             $table->foreign('course_id')->references('id')->on('courses')->cascadeOnDelete();
         });
