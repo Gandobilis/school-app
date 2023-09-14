@@ -15,6 +15,7 @@ class FileUploadService
 
     public static function deleteFile($path): bool
     {
+        $path = 'public/' . $path;
         if (Storage::exists($path)) return Storage::delete($path);
         return false;
     }

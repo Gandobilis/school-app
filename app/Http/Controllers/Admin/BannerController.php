@@ -7,6 +7,7 @@ use App\Http\Requests\Banner\BannerRequest;
 use App\Models\Banner;
 use Illuminate\Http\Response;
 use App\Services\FileUploadService;
+use Illuminate\Support\Facades\Storage;
 
 class BannerController extends Controller
 {
@@ -45,7 +46,7 @@ class BannerController extends Controller
         $data = $request->validated();
         if (isset($data['image'])) {
             $data['image'] = fileUploadService::uploadFile($data['image'], 'banners');
-            FileUploadService::deleteFile($banner->image);
+            FileUploadService::deleteFile($banner->getAttributes()['image']);
         }
 
         $banner->update($data);
@@ -58,6 +59,7 @@ class BannerController extends Controller
      */
     public function destroy(Banner $banner): Response
     {
+        FileUploadService::deleteFile($banner->getAttributes()['image']);
         $banner->delete();
 
         return response(['message' => 'banner deleted successfully']);
