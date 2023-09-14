@@ -5,8 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Banner\BannerRequest;
 use App\Models\Banner;
-use Exception;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Services\FileUploadService;
 
@@ -15,26 +13,11 @@ class BannerController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): Response
+    public function index(): Response
     {
-        try {
-            $perPage = $request->input('per_page', 10);
-            $banners = Banner::paginate($perPage);
+        $banners = Banner::all();
 
-            if ($banners->isEmpty()) {
-                return response([
-                    'message' => 'No banners found'
-                ], 404);
-            }
-
-            return response([
-                'banners' => $banners
-            ], 200);
-        } catch (Exception) {
-            return response([
-                'error' => 'An error occurred while fetching banners'
-            ], 500);
-        }
+        return response(['banners' => $banners]);
     }
 
     /**
@@ -45,16 +28,9 @@ class BannerController extends Controller
         $data = $request->validated();
         $data['image'] = fileUploadService::uploadFile($data['image'], 'banners');
 
-        try {
-            $banner = Banner::create($data);
-            return response([
-                'banner' => $banner
-            ], 201);
-        } catch (Exception) {
-            return response([
-                'message' => 'Failed to create banner'
-            ], 500);
-        }
+        $banner = Banner::create($data);
+
+        return response(['banner' => $banner], 201);
     }
 
     /**
@@ -62,9 +38,7 @@ class BannerController extends Controller
      */
     public function show(Banner $banner): Response
     {
-        return response([
-            'banner' => $banner
-        ], 200);
+        return response(['banner' => $banner]);
     }
 
     /**
@@ -79,33 +53,22 @@ class BannerController extends Controller
             FileUploadService::deleteFile($banner->getAttributes()['image']);
         }
 
-        try {
-            $banner->update($data);
-            return response([
-                'banner' => $banner->refresh()
-            ], 200);
-        } catch (Exception) {
-            return response([
-                'message' => 'Failed to update banner'
-            ], 500);
-        }
+        $banner->update($data);
+        $banner = $banner->refresh();
+
+        return response(['banner' => $banner]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Banner $banner): Response
+    public
+    function destroy(Banner $banner): Response
     {
         FileUploadService::deleteFile($banner->getAttributes()['image']);
 
-        if ($banner->delete()) {
-            return response([
-                'message' => 'Banner deleted successfully'
-            ], 200);
-        } else {
-            return response([
-                'message' => 'Failed to delete banner'
-            ], 500);
-        }
+        $banner->delete();
+
+        return response(['message' => 'Banner deleted successfully']);
     }
 }

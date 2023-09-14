@@ -5,7 +5,7 @@ use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Admin\LecturerController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\AuthController;
-use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\Public\SubscriptionController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,14 +21,16 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('locale')->group(function () {
     Route::apiResource('/banners', BannerController::class)->only(['index', 'show'])->names('banners');
 
-    Route::post('/courses/{course}/register', [CourseController::class, 'register'])->name('course.register');
+    Route::post('/subscribe', [SubscriptionController::class, 'subscribe'])->name('subscriptions.subscribe');
+    Route::delete('/unsubscribe/{subscription}', [SubscriptionController::class, 'unsubscribe'])->name('subscriptions.unsubscribe');
 
-    Route::post('/subscribe', [SubscriptionController::class, 'subscribe'])->name('subscribe');
-    Route::delete('/unsubscribe/{subscription}', [SubscriptionController::class, 'unsubscribe'])->name('unsubscribe');
+    Route::post('/courses/{course}/register', [CourseController::class, 'register'])->name('course.register');
 
     Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
 
     Route::middleware('auth:sanctum')->group(function () {
+        Route::apiResource('/subscriptions', SubscriptionController::class)->only('index')->names('admin.subscriptions');
+
         Route::post('/logout', [AuthController::class, 'logout'])->middleware(['auth:sanctum'])->name('auth.logout');
 
         Route::apiResource('/users', UserController::class)->names('admin.users');
