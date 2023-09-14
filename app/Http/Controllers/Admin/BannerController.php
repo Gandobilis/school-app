@@ -15,13 +15,7 @@ class BannerController extends Controller
      */
     public function index(): Response
     {
-        $banners = Banner::all();
-
-        if ($banners->isEmpty()) {
-            return response(['message' => 'No banners found'], 404);
-        }
-
-        return response(['banners' => $banners]);
+        return response(['banners' => Banner::all()]);
     }
 
     /**
@@ -32,13 +26,7 @@ class BannerController extends Controller
         $data = $request->validated();
         $data['image'] = fileUploadService::uploadFile($data['image'], 'banners');
 
-        try {
-            $banner = Banner::create($data);
-        } catch (Exception $e) {
-            return response(['message' => 'Failed to create banner'], 500);
-        }
-
-        return response(['banner' => $banner]);
+        return response(['banner' => Banner::create($data)]);
     }
 
     /**
@@ -46,10 +34,6 @@ class BannerController extends Controller
      */
     public function show(Banner $banner): Response
     {
-        if (!$banner->exists) {
-            return response(['message' => 'Banner not found'], 404);
-        }
-
         return response(['banner' => $banner]);
     }
 
@@ -58,18 +42,13 @@ class BannerController extends Controller
      */
     public function update(BannerRequest $request, Banner $banner): Response
     {
-        if (!$banner->exists) {
-            return response(['message' => 'Banner not found'], 404);
-        }
-
         $data = $request->validated();
         if (isset($data['image'])) {
             $data['image'] = fileUploadService::uploadFile($data['image'], 'banners');
+            FileUploadService::deleteFile($banner->image);
         }
 
-        if (FileUploadService::deleteFile($banner->image) && $banner->update($data)) {
-            response(['message' => 'failed to update banner'], 500);
-        }
+        $banner->update($data);
 
         return response(['banner' => $banner->refresh()]);
     }
@@ -79,14 +58,8 @@ class BannerController extends Controller
      */
     public function destroy(Banner $banner): Response
     {
-        if (!$banner->exists) {
-            return response(['message' => 'Banner not found'], 404);
-        }
+        $banner->delete();
 
-        if (FileUploadService::deleteFile($banner->image) && $banner->delete()) {
-            return response(['message' => 'banner deleted successfully']);
-        } else {
-            return response(['message' => 'failed to delete banner'], 500);
-        }
+        return response(['message' => 'banner deleted successfully']);
     }
 }
