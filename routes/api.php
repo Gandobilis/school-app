@@ -31,7 +31,7 @@ Route::middleware('locale')->group(function () {
 
     Route::apiResource('/lecturers', LecturerController::class)->only(['index', 'show'])->names('lecturers');
 
-    Route::middleware('auth:sanctum')->group(function () {
+    Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/logout', [AuthController::class, 'logout'])->middleware(['auth:sanctum'])->name('auth.logout');
 
         Route::apiResource('/banners', BannerController::class)->except(['index', 'show'])->names('admin.banners');
@@ -43,6 +43,7 @@ Route::middleware('locale')->group(function () {
 
         Route::apiResource('/lecturers', LecturerController::class)->except(['index', 'show'])->names('admin.lecturers');
 
-        Route::apiResource('/users', UserController::class)->names('admin.users');
+        Route::apiResource('/users', UserController::class)->except('store')->names('admin.users');
+        Route::apiResource('/users', UserController::class)->only('store')->middleware('role:admin')->names('admin.users');
     });
 });
