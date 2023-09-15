@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Banner;
+namespace App\Http\Requests\Course;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class BannerRequest extends FormRequest
+class StudentRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,16 +22,12 @@ class BannerRequest extends FormRequest
      */
     public function rules(): array
     {
-        $rules = [
-            'image' => 'required|image|mimes:jpeg,png,jpg',
-            'link' => 'required|url',
+        return [
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'email' => 'required|email|unique:students,email',
+            'phone' => 'required|numeric|unique:students,phone',
+            'comment' => 'string',
         ];
-
-        foreach (config('translatable.locales') as $locale) {
-            $rules["$locale.title"] = "required|string|max:255";
-            $rules["$locale.description"] = "required|string";
-        }
-
-        return $rules;
     }
 }

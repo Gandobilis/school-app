@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Public;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Subscription\SubscriptionRequest;
 use App\Models\Subscription;
-use Exception;
 use Illuminate\Http\Response;
 
 class SubscriptionController extends Controller

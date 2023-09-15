@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Course\CourseRequest;
+use App\Http\Requests\Course\StudentRequest;
 use App\Models\Course;
 use App\Models\Student;
 use App\Services\FileUploadService;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class CourseController extends Controller
@@ -18,7 +18,7 @@ class CourseController extends Controller
      */
     public function index(): Response
     {
-        $courses = Course::select(['image', 'title', 'fee', 'old_fee', 'short_description'])->paginate(10);
+        $courses = Course::all();
 
         return response(['courses' => $courses]);
     }
@@ -34,8 +34,7 @@ class CourseController extends Controller
 
         $course = Course::create($data);
 
-        $lecturer_ids = $data['lecturer_ids'];
-        if (isset($lecturer_ids)) $course->lecturers()->attach($lecturer_ids);
+        if (isset($data['lecturer_ids'])) $course->lecturers()->attach($data['lecturer_ids']);
 
         return response(['course' => $course], 201);
     }
@@ -45,7 +44,7 @@ class CourseController extends Controller
      */
     public function show(Course $course): Response
     {
-        $course->setHidden(['short_description']);
+        $course->load('lecturers');
 
         return response(['course' => $course]);
     }
@@ -67,8 +66,7 @@ class CourseController extends Controller
 
         $course->update($data);
 
-        $lecturer_ids = $data['lecturer_ids'];
-        if (isset($lecturer_ids)) $course->lecturers()->sync($lecturer_ids);
+        if (isset($data['lecturer_ids'])) $course->lecturers()->sync($data['lecturer_ids']);
 
         return response(['course' => $course->refresh()]);
     }
@@ -87,8 +85,26 @@ class CourseController extends Controller
         return response(["message" => "Course deleted"]);
     }
 
-    public function register(Request $request): Response
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function register(StudentRequest $request, Course $course): Response
     {
-        return response(Student::create($request->all()));
+        $data = $request->validated();
+        $data['course_id'] = $course->id;
+
+        $course->students()->create($data);
+
+        return response(['message' => "You registered successfully"], 201);
+    }
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function students(Course $course): Response
+    {
+        $students = $course->students()->get();
+
+        return response(['students' => $students]);
     }
 }

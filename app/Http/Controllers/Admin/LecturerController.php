@@ -9,16 +9,12 @@ use App\Services\FileUploadService;
 
 class LecturerController extends Controller
 {
-    public function __construct(private FileUploadService $fileUploadService)
-    {
-    }
-
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $lecturers = Lecturer::with('translation', 'courses')->paginate(10);
+        $lecturers = Lecturer::with('courses')->get();
         return response(['lecturers' => $lecturers]);
     }
 
@@ -28,7 +24,7 @@ class LecturerController extends Controller
     public function store(LecturerRequest $request)
     {
         $data = $request->validated();
-        $data['image'] = $this->fileUploadService->fileUpload($data['image'], 'lecturer/images')['path'];
+        $data['image'] = FileUploadService::uploadFile($data['image'], 'lecturer/images');
 
         $lecturer = Lecturer::create($data);
         if (isset($data['course_ids'])) $lecturer->courses()->attach($data['course_ids']);
