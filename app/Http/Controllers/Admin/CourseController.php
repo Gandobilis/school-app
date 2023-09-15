@@ -65,10 +65,9 @@ class CourseController extends Controller
         }
 
         $course->update($data);
-
         if (isset($data['lecturer_ids'])) $course->lecturers()->sync($data['lecturer_ids']);
 
-        return response(['course' => $course->refresh()]);
+        return response(['course' => $course]);
     }
 
     /**

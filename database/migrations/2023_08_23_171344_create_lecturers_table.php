@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('lecturers', function (Blueprint $table) {
             $table->id();
-            $table->text('image')->nullable();
+            $table->text('image');
             $table->string('linkedin')->nullable();
             $table->timestamps();
         });

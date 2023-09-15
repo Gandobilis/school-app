@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Lecturer;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class LecturerRequest extends FormRequest
@@ -17,16 +18,17 @@ class LecturerRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array|string>
+     * @return array<string, ValidationRule|array|string>
      */
     public function rules(): array
     {
         $rules = [
-            "linkedin" => "required|string|max:255",
-            "image" => "required|mimes:png,jpg,jpeg,webp",
+            "linkedin" => "url",
+            "image" => "required|mimes:png,jpg,jpeg",
             "course_ids" => "array",
             "course_ids.*" => "exists:courses,id"
         ];
+
         foreach (config('translatable.locales') as $locale) {
             $rules["$locale.first_name"] = "required|string|max:255";
             $rules["$locale.last_name"] = "required|string|max:255";

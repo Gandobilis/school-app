@@ -14,7 +14,8 @@ class LecturerController extends Controller
      */
     public function index()
     {
-        $lecturers = Lecturer::with('courses')->get();
+        $lecturers = Lecturer::all();
+
         return response(['lecturers' => $lecturers]);
     }
 
@@ -24,7 +25,7 @@ class LecturerController extends Controller
     public function store(LecturerRequest $request)
     {
         $data = $request->validated();
-        $data['image'] = FileUploadService::uploadFile($data['image'], 'lecturer/images');
+        $data['image'] = FileUploadService::uploadFile($data['image'], 'lecturers');
 
         $lecturer = Lecturer::create($data);
         if (isset($data['course_ids'])) $lecturer->courses()->attach($data['course_ids']);
@@ -37,7 +38,7 @@ class LecturerController extends Controller
      */
     public function show(Lecturer $lecturer)
     {
-        $lecturer->load('translation', 'courses');
+        $lecturer->load('courses');
 
         return response(['lecturer' => $lecturer]);
     }
@@ -49,13 +50,14 @@ class LecturerController extends Controller
     {
         $data = $request->validated();
         if (isset($data['image'])) {
-            $data['image'] = $this->fileUploadService->fileUpload($data['image'], 'lecturer/images')['path'];
-            $this->fileUploadService->deleteFile($lecturer->image);
+            $data['image'] = FileUploadService::uploadFile($data['image'], 'lecturers');
+            FileUploadService::deleteFile($lecturer->getAttributes()['image']);
         }
+
         $lecturer->update($data);
         if (isset($data['course_ids'])) $lecturer->courses()->sync($data['course_ids']);
 
-        return response(['lecturer' => $lecturer->refresh()]);
+        return response(['lecturer' => $lecturer]);
     }
 
     /**
@@ -63,6 +65,8 @@ class LecturerController extends Controller
      */
     public function destroy(Lecturer $lecturer)
     {
+        FileUploadService::deleteFile($lecturer->getAttributes()['image']);
+
         $lecturer->courses()->detach();
         $lecturer->delete();
 

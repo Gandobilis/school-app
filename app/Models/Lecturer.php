@@ -17,7 +17,7 @@ class Lecturer extends Model implements TranslatableContract
 
     public $translatedAttributes = ['first_name', 'last_name', 'position', 'description'];
 
-    protected $fillable = ['image', 'linkedin'];
+    protected $fillable = ['image'];
 
     public function courses(): belongsToMany
     {
@@ -28,20 +28,6 @@ class Lecturer extends Model implements TranslatableContract
     {
         return Attribute::make(
             get: fn(string $image) => url('/') . '/storage/' . $image
-        );
-    }
-
-    protected function createdAt(): Attribute
-    {
-        return Attribute::make(
-            get: fn(string $createAt) => Carbon::parse($createAt)->format('d-m-Y H:i:s')
-        );
-    }
-
-    protected function updatedAt(): Attribute
-    {
-        return Attribute::make(
-            get: fn(string $updatedAt) => Carbon::parse($updatedAt)->format('d-m-Y H:i:s')
         );
     }
 }
