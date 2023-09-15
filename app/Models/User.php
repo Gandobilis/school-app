@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -24,6 +25,7 @@ class User extends Authenticatable
         'email',
         'password',
         'profile_image',
+//        'role_id',
         'status'
     ];
 
@@ -47,16 +49,21 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    public function role(): BelongsTo
+    {
+        return $this->belongsTo(Role::class);
+    }
+
     public function recommendations(): HasMany
     {
         return $this->hasMany(Recommendation::class);
     }
 
-    protected function profileImage(): Attribute
+    protected function image(): Attribute
     {
         return Attribute::make(
         // Default profile picture can be returned instead of null.
-            get: fn($profile_image) => $profile_image ? url('/storage/' . $profile_image) : null
+            get: fn($image) => $image ? url('/storage/' . $image) : null
         );
     }
 }
