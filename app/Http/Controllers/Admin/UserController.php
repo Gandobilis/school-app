@@ -10,16 +10,13 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
-    public function __construct(protected FileUploadService $fileUploadService)
-    {
-    }
-
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
         $users = User::all();
+
         return response(['users' => $users]);
     }
 
@@ -29,21 +26,17 @@ class UserController extends Controller
     public function store(UserRequest $request)
     {
         $data = $request->validated();
-        $data['profile_image'] = $this->fileUploadService->fileUpload($data['profile_image'], 'storage/users/profile_images')['path'];
+        $data['image'] = FileUploadService::uploadFile($data['image'], 'users');
 
         $user = User::create($data);
-        return response([
-            'message' => "User Created",
-            'user' => $user
-        ], 201);
+        return response(['user' => $user], 201);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show(User $user)
     {
-        $user = User::find($id);
         return response(['user' => $user]);
     }
 
@@ -52,21 +45,25 @@ class UserController extends Controller
      */
     public function update(UserRequest $request, User $user)
     {
-        $user->update($request->validated());
+        $data = $request->validated();
+        if (isset($data['image'])) {
+            $data['image'] = FileUploadService::uploadFile($data['image'], 'users');
+            FileUploadService::deleteFile($user->getAttributes()['image']);
+        }
 
-        return response([
-            'message' => "User Updated",
-            'user' => $user->refresh()
-        ], 200);
+        $user->update($data);
+
+        return response(['user' => $user]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(User $user)
     {
-        return response([
-            'message' => "User Deleted"
-        ], 200);
+        FileUploadService::deleteFile($user->getAttributes()['image']);
+        $user->delete();
+
+        return response(["message" => "User Deleted"]);
     }
 }
