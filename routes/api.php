@@ -29,6 +29,8 @@ Route::middleware('locale')->group(function () {
     Route::apiResource('/courses', CourseController::class)->only(['index', 'show'])->names('courses');
     Route::post('/courses/{course}/register', [CourseController::class, 'register'])->name('course.register');
 
+    Route::apiResource('/lecturers', LecturerController::class)->only(['index', 'show'])->names('lecturers');
+
     Route::middleware('auth:sanctum')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout'])->middleware(['auth:sanctum'])->name('auth.logout');
 
@@ -39,7 +41,7 @@ Route::middleware('locale')->group(function () {
         Route::apiResource('/courses', CourseController::class)->except(['index', 'show'])->names('admin.courses');
         Route::get('/courses/{course}/students', [CourseController::class, 'students'])->name('admin.course.students');
 
-        Route::apiResource('/lecturers', LecturerController::class)->names('admin.lecturers');
+        Route::apiResource('/lecturers', LecturerController::class)->except(['index', 'show'])->names('admin.lecturers');
 
         Route::apiResource('/users', UserController::class)->names('admin.users');
     });
